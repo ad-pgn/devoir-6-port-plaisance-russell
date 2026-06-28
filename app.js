@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const catwayRoutes = require('./routes/catways');
+const reservationRoutes = require('./routes/reservations');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,7 @@ app.use(express.static('public'));
 // Routes
 app.use('/', authRoutes);
 app.use('/catways', catwayRoutes);
+app.use('/catways/:id/reservations', reservationRoutes);
 
 // Route de test
 app.get('/', (req, res) => {
