@@ -25,6 +25,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static('public'));
 
+// Routes
+app.use('/', authRoutes);
+
 // Route de test
 app.get('/', (req, res) => {
   res.send('Port de Plaisance Russell — API en ligne');
