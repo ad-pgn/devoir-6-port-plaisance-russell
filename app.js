@@ -8,6 +8,8 @@ require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
+const authRoutes = require('./routes/auth');
+const catwayRoutes = require('./routes/catways');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,6 +29,7 @@ app.use(express.static('public'));
 
 // Routes
 app.use('/', authRoutes);
+app.use('/catways', catwayRoutes);
 
 // Route de test
 app.get('/', (req, res) => {
