@@ -35,9 +35,9 @@ app.use('/catways', catwayRoutes);
 app.use('/catways/:id/reservations', reservationRoutes);
 app.use('/users', userRoutes);
 
-// Route de test
+// Route d'accueil
 app.get('/', (req, res) => {
-  res.send('Port de Plaisance Russell — API en ligne');
+  res.render('index');
 });
 
 // Démarrage du serveur
