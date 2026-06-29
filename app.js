@@ -12,6 +12,7 @@ const authRoutes = require('./routes/auth');
 const catwayRoutes = require('./routes/catways');
 const reservationRoutes = require('./routes/reservations');
 const userRoutes = require('./routes/users');
+const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,6 +35,7 @@ app.use('/', authRoutes);
 app.use('/catways', catwayRoutes);
 app.use('/catways/:id/reservations', reservationRoutes);
 app.use('/users', userRoutes);
+app.use('/dashboard', dashboardRoutes);
 
 // Route d'accueil
 app.get('/', (req, res) => {
