@@ -63,4 +63,4 @@ L'application est accessible sur `http://localhost:3000`.
 - Documentation API interactive (Swagger)
 
 ---
-*Dernière mise à jour : 30 juin 2026*
+*Dernière mise à jour le 30 juin 2026*
