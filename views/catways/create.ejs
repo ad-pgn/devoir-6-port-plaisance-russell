@@ -1,0 +1,38 @@
+<%- include('../partials/header') %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>⚓ Nouveau catway</h2>
+  <a href="/catways" class="btn btn-secondary">← Retour</a>
+</div>
+
+<div class="card">
+  <div class="card-body">
+
+    <% if (typeof error !== 'undefined') { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <form action="/catways" method="POST">
+      <div class="mb-3">
+        <label for="catwayNumber" class="form-label">Numéro de catway</label>
+        <input type="number" class="form-control" id="catwayNumber" name="catwayNumber" required>
+      </div>
+      <div class="mb-3">
+        <label for="catwayType" class="form-label">Type</label>
+        <select class="form-select" id="catwayType" name="catwayType" required>
+          <option value="">-- Choisir un type --</option>
+          <option value="short">Short</option>
+          <option value="long">Long</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="catwayState" class="form-label">État</label>
+        <textarea class="form-control" id="catwayState" name="catwayState" rows="3" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Créer</button>
+    </form>
+
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

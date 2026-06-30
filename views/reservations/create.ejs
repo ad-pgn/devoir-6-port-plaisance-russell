@@ -1,0 +1,38 @@
+<%- include('../partials/header') %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Nouvelle réservation — Catway n°<%= catway.catwayNumber %></h2>
+  <a href="/catways/<%= catway.catwayNumber %>/reservations" class="btn btn-secondary">← Retour</a>
+</div>
+
+<div class="card">
+  <div class="card-body">
+
+    <% if (typeof error !== 'undefined') { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <form action="/catways/<%= catway.catwayNumber %>/reservations" method="POST">
+      <div class="mb-3">
+        <label for="clientName" class="form-label">Nom du client</label>
+        <input type="text" class="form-control" id="clientName" name="clientName" required>
+      </div>
+      <div class="mb-3">
+        <label for="boatName" class="form-label">Nom du bateau</label>
+        <input type="text" class="form-control" id="boatName" name="boatName" required>
+      </div>
+      <div class="mb-3">
+        <label for="startDate" class="form-label">Date de début</label>
+        <input type="date" class="form-control" id="startDate" name="startDate" required>
+      </div>
+      <div class="mb-3">
+        <label for="endDate" class="form-label">Date de fin</label>
+        <input type="date" class="form-control" id="endDate" name="endDate" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Créer</button>
+    </form>
+
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

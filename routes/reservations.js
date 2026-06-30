@@ -9,24 +9,40 @@ const authMiddleware = require('../middleware/auth');
 const {
   getAllReservations,
   getReservation,
+  getCreateReservation,
   createReservation,
+  getEditReservation,
   updateReservation,
   deleteReservation
 } = require('../controllers/reservationController');
 
 /**
  * @route GET /catways/:id/reservations
- * @description Récupère toutes les réservations d'un catway
+ * @description Affiche la liste des réservations d'un catway
  * @access Private
  */
 router.get('/', authMiddleware, getAllReservations);
 
 /**
+ * @route GET /catways/:id/reservations/create
+ * @description Affiche le formulaire de création
+ * @access Private
+ */
+router.get('/create', authMiddleware, getCreateReservation);
+
+/**
  * @route GET /catways/:id/reservations/:idReservation
- * @description Récupère une réservation par son id
+ * @description Affiche le détail d'une réservation
  * @access Private
  */
 router.get('/:idReservation', authMiddleware, getReservation);
+
+/**
+ * @route GET /catways/:id/reservations/:idReservation/edit
+ * @description Affiche le formulaire de modification
+ * @access Private
+ */
+router.get('/:idReservation/edit', authMiddleware, getEditReservation);
 
 /**
  * @route POST /catways/:id/reservations
@@ -36,17 +52,17 @@ router.get('/:idReservation', authMiddleware, getReservation);
 router.post('/', authMiddleware, createReservation);
 
 /**
- * @route PUT /catways/:id/reservations/:idReservation
+ * @route POST /catways/:id/reservations/:idReservation
  * @description Met à jour une réservation
  * @access Private
  */
-router.put('/:idReservation', authMiddleware, updateReservation);
+router.post('/:idReservation', authMiddleware, updateReservation);
 
 /**
- * @route DELETE /catways/:id/reservations/:idReservation
+ * @route POST /catways/:id/reservations/:idReservation/delete
  * @description Supprime une réservation
  * @access Private
  */
-router.delete('/:idReservation', authMiddleware, deleteReservation);
+router.post('/:idReservation/delete', authMiddleware, deleteReservation);
 
 module.exports = router;

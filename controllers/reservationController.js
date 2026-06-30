@@ -4,9 +4,10 @@
  */
 
 const Reservation = require('../models/Reservation');
+const Catway = require('../models/Catway');
 
 /**
- * Récupère toutes les réservations d'un catway.
+ * Affiche la liste de toutes les réservations.
  * @async
  * @function getAllReservations
  * @param {Object} req - Objet requête Express
@@ -16,14 +17,18 @@ const Reservation = require('../models/Reservation');
 const getAllReservations = async (req, res) => {
   try {
     const reservations = await Reservation.find({ catwayNumber: req.params.id });
-    res.status(200).json(reservations);
+    const catway = await Catway.findOne({ catwayNumber: req.params.id });
+    if (!catway) {
+      return res.status(404).send('Catway non trouvé');
+    }
+    res.render('reservations/index', { reservations, catway });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).send('Erreur serveur');
   }
 };
 
 /**
- * Récupère une réservation par son id.
+ * Affiche le détail d'une réservation.
  * @async
  * @function getReservation
  * @param {Object} req - Objet requête Express
@@ -34,16 +39,36 @@ const getReservation = async (req, res) => {
   try {
     const reservation = await Reservation.findById(req.params.idReservation);
     if (!reservation) {
-      return res.status(404).json({ message: 'Réservation non trouvée' });
+      return res.status(404).send('Réservation non trouvée');
     }
-    res.status(200).json(reservation);
+    res.render('reservations/show', { reservation });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).send('Erreur serveur');
   }
 };
 
 /**
- * Crée une nouvelle réservation pour un catway.
+ * Affiche le formulaire de création d'une réservation.
+ * @async
+ * @function getCreateReservation
+ * @param {Object} req - Objet requête Express
+ * @param {Object} res - Objet réponse Express
+ * @returns {Promise<void>}
+ */
+const getCreateReservation = async (req, res) => {
+  try {
+    const catway = await Catway.findOne({ catwayNumber: req.params.id });
+    if (!catway) {
+      return res.status(404).send('Catway non trouvé');
+    }
+    res.render('reservations/create', { catway });
+  } catch (error) {
+    res.status(500).send('Erreur serveur');
+  }
+};
+
+/**
+ * Crée une nouvelle réservation.
  * @async
  * @function createReservation
  * @param {Object} req - Objet requête Express
@@ -57,9 +82,30 @@ const createReservation = async (req, res) => {
       catwayNumber: req.params.id
     });
     await reservation.save();
-    res.status(201).json(reservation);
+    res.redirect(`/catways/${req.params.id}/reservations`);
   } catch (error) {
-    res.status(400).json({ message: 'Erreur de création', error: error.message });
+    const catway = await Catway.findOne({ catwayNumber: req.params.id });
+    res.render('reservations/create', { catway, error: error.message });
+  }
+};
+
+/**
+ * Affiche le formulaire de modification d'une réservation.
+ * @async
+ * @function getEditReservation
+ * @param {Object} req - Objet requête Express
+ * @param {Object} res - Objet réponse Express
+ * @returns {Promise<void>}
+ */
+const getEditReservation = async (req, res) => {
+  try {
+    const reservation = await Reservation.findById(req.params.idReservation);
+    if (!reservation) {
+      return res.status(404).send('Réservation non trouvée');
+    }
+    res.render('reservations/edit', { reservation });
+  } catch (error) {
+    res.status(500).send('Erreur serveur');
   }
 };
 
@@ -79,11 +125,11 @@ const updateReservation = async (req, res) => {
       { new: true, runValidators: true }
     );
     if (!reservation) {
-      return res.status(404).json({ message: 'Réservation non trouvée' });
+      return res.status(404).send('Réservation non trouvée');
     }
-    res.status(200).json(reservation);
+    res.redirect(`/catways/${req.params.id}/reservations`);
   } catch (error) {
-    res.status(400).json({ message: 'Erreur de mise à jour', error: error.message });
+    res.status(400).send('Erreur de mise à jour');
   }
 };
 
@@ -99,12 +145,12 @@ const deleteReservation = async (req, res) => {
   try {
     const reservation = await Reservation.findByIdAndDelete(req.params.idReservation);
     if (!reservation) {
-      return res.status(404).json({ message: 'Réservation non trouvée' });
+      return res.status(404).send('Réservation non trouvée');
     }
-    res.status(200).json({ message: 'Réservation supprimée avec succès' });
+    res.redirect(`/catways/${req.params.id}/reservations`);
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).send('Erreur serveur');
   }
 };
 
-module.exports = { getAllReservations, getReservation, createReservation, updateReservation, deleteReservation };
+module.exports = { getAllReservations, getReservation, getCreateReservation, createReservation, getEditReservation, updateReservation, deleteReservation };

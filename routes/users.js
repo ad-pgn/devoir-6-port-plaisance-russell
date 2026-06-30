@@ -9,24 +9,40 @@ const authMiddleware = require('../middleware/auth');
 const {
   getAllUsers,
   getUser,
+  getCreateUser,
   createUser,
+  getEditUser,
   updateUser,
   deleteUser
 } = require('../controllers/userController');
 
 /**
  * @route GET /users
- * @description Récupère la liste de tous les utilisateurs
+ * @description Affiche la liste de tous les utilisateurs
  * @access Private
  */
 router.get('/', authMiddleware, getAllUsers);
 
 /**
+ * @route GET /users/create
+ * @description Affiche le formulaire de création
+ * @access Private
+ */
+router.get('/create', authMiddleware, getCreateUser);
+
+/**
  * @route GET /users/:email
- * @description Récupère un utilisateur par son email
+ * @description Affiche le détail d'un utilisateur
  * @access Private
  */
 router.get('/:email', authMiddleware, getUser);
+
+/**
+ * @route GET /users/:email/edit
+ * @description Affiche le formulaire de modification
+ * @access Private
+ */
+router.get('/:email/edit', authMiddleware, getEditUser);
 
 /**
  * @route POST /users
@@ -36,17 +52,17 @@ router.get('/:email', authMiddleware, getUser);
 router.post('/', authMiddleware, createUser);
 
 /**
- * @route PUT /users/:email
+ * @route POST /users/:email
  * @description Met à jour un utilisateur
  * @access Private
  */
-router.put('/:email', authMiddleware, updateUser);
+router.post('/:email', authMiddleware, updateUser);
 
 /**
- * @route DELETE /users/:email
+ * @route POST /users/:email/delete
  * @description Supprime un utilisateur
  * @access Private
  */
-router.delete('/:email', authMiddleware, deleteUser);
+router.post('/:email/delete', authMiddleware, deleteUser);
 
 module.exports = router;

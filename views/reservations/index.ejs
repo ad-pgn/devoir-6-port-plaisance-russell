@@ -1,0 +1,48 @@
+<%- include('../partials/header') %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>Réservations du catway n°<%= catway.catwayNumber %></h2>
+  <div>
+    <a href="/catways" class="btn btn-secondary me-2">← Catways</a>
+    <a href="/catways/<%= catway.catwayNumber %>/reservations/create" class="btn btn-primary">+ Nouvelle réservation</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <% if (reservations.length === 0) { %>
+      <p class="text-muted">Aucune réservation pour ce catway.</p>
+    <% } else { %>
+      <table class="table table-striped table-hover">
+        <thead class="table-primary">
+          <tr>
+            <th>Client</th>
+            <th>Bateau</th>
+            <th>Début</th>
+            <th>Fin</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% reservations.forEach(reservation => { %>
+            <tr>
+              <td><%= reservation.clientName %></td>
+              <td><%= reservation.boatName %></td>
+              <td><%= new Date(reservation.startDate).toLocaleDateString('fr-FR') %></td>
+              <td><%= new Date(reservation.endDate).toLocaleDateString('fr-FR') %></td>
+              <td>
+                <a href="/catways/<%= catway.catwayNumber %>/reservations/<%= reservation._id %>" class="btn btn-sm btn-info">👁 Détail</a>
+                <a href="/catways/<%= catway.catwayNumber %>/reservations/<%= reservation._id %>/edit" class="btn btn-sm btn-warning">✏️ Modifier</a>
+                <form action="/catways/<%= catway.catwayNumber %>/reservations/<%= reservation._id %>/delete" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cette réservation ?')">
+                  <button type="submit" class="btn btn-sm btn-danger">🗑 Supprimer</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
