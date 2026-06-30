@@ -13,6 +13,8 @@ const catwayRoutes = require('./routes/catways');
 const reservationRoutes = require('./routes/reservations');
 const userRoutes = require('./routes/users');
 const dashboardRoutes = require('./routes/dashboard');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -36,6 +38,7 @@ app.use('/catways', catwayRoutes);
 app.use('/catways/:id/reservations', reservationRoutes);
 app.use('/users', userRoutes);
 app.use('/dashboard', dashboardRoutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Route d'accueil
 app.get('/', (req, res) => {
