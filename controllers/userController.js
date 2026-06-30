@@ -6,7 +6,7 @@
 const User = require('../models/User');
 
 /**
- * Récupère la liste de tous les utilisateurs.
+ * Affiche la liste de tous les utilisateurs.
  * @async
  * @function getAllUsers
  * @param {Object} req - Objet requête Express
@@ -16,14 +16,14 @@ const User = require('../models/User');
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select('-password');
-    res.status(200).json(users);
+    res.render('users/index', { users });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).send('Erreur serveur');
   }
 };
 
 /**
- * Récupère un utilisateur par son email.
+ * Affiche le détail d'un utilisateur.
  * @async
  * @function getUser
  * @param {Object} req - Objet requête Express
@@ -34,12 +34,23 @@ const getUser = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email }).select('-password');
     if (!user) {
-      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+      return res.status(404).send('Utilisateur non trouvé');
     }
-    res.status(200).json(user);
+    res.render('users/show', { user });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).send('Erreur serveur');
   }
+};
+
+/**
+ * Affiche le formulaire de création d'un utilisateur.
+ * @function getCreateUser
+ * @param {Object} req - Objet requête Express
+ * @param {Object} res - Objet réponse Express
+ * @returns {void}
+ */
+const getCreateUser = (req, res) => {
+  res.render('users/create');
 };
 
 /**
@@ -54,19 +65,37 @@ const createUser = async (req, res) => {
   try {
     const user = new User(req.body);
     await user.save();
-    const userWithoutPassword = user.toObject();
-    delete userWithoutPassword.password;
-    res.status(201).json(userWithoutPassword);
+    res.redirect('/users');
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(409).json({ message: 'Cet email est déjà utilisé' });
+      return res.render('users/create', { error: 'Cet email est déjà utilisé' });
     }
-    res.status(400).json({ message: 'Erreur de création', error: error.message });
+    res.render('users/create', { error: error.message });
   }
 };
 
 /**
- * Met à jour les informations d'un utilisateur.
+ * Affiche le formulaire de modification d'un utilisateur.
+ * @async
+ * @function getEditUser
+ * @param {Object} req - Objet requête Express
+ * @param {Object} res - Objet réponse Express
+ * @returns {Promise<void>}
+ */
+const getEditUser = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email }).select('-password');
+    if (!user) {
+      return res.status(404).send('Utilisateur non trouvé');
+    }
+    res.render('users/edit', { user });
+  } catch (error) {
+    res.status(500).send('Erreur serveur');
+  }
+};
+
+/**
+ * Met à jour un utilisateur.
  * @async
  * @function updateUser
  * @param {Object} req - Objet requête Express
@@ -77,28 +106,23 @@ const updateUser = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email });
     if (!user) {
-      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+      return res.status(404).send('Utilisateur non trouvé');
     }
-
     if (req.body.username) user.username = req.body.username;
     if (req.body.email) user.email = req.body.email;
     if (req.body.password) user.password = req.body.password;
-
     await user.save();
-
-    const userWithoutPassword = user.toObject();
-    delete userWithoutPassword.password;
-    res.status(200).json(userWithoutPassword);
+    res.redirect('/users');
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(409).json({ message: 'Cet email est déjà utilisé' });
+      return res.render('users/edit', { user: req.body, error: 'Cet email est déjà utilisé' });
     }
-    res.status(400).json({ message: 'Erreur de mise à jour', error: error.message });
+    res.render('users/edit', { user: req.body, error: error.message });
   }
 };
 
 /**
- * Supprime un utilisateur par son email.
+ * Supprime un utilisateur.
  * @async
  * @function deleteUser
  * @param {Object} req - Objet requête Express
@@ -109,12 +133,12 @@ const deleteUser = async (req, res) => {
   try {
     const user = await User.findOneAndDelete({ email: req.params.email });
     if (!user) {
-      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+      return res.status(404).send('Utilisateur non trouvé');
     }
-    res.status(200).json({ message: 'Utilisateur supprimé avec succès' });
+    res.redirect('/users');
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).send('Erreur serveur');
   }
 };
 
-module.exports = { getAllUsers, getUser, createUser, updateUser, deleteUser };
+module.exports = { getAllUsers, getUser, getCreateUser, createUser, getEditUser, updateUser, deleteUser };

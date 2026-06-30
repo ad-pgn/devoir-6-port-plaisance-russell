@@ -6,7 +6,7 @@
 const Catway = require('../models/Catway');
 
 /**
- * Récupère la liste de tous les catways.
+ * Affiche la liste de tous les catways.
  * @async
  * @function getAllCatways
  * @param {Object} req - Objet requête Express
@@ -15,15 +15,15 @@ const Catway = require('../models/Catway');
  */
 const getAllCatways = async (req, res) => {
   try {
-    const catways = await Catway.find();
-    res.status(200).json(catways);
+    const catways = await Catway.find().sort({ catwayNumber: 1 });
+    res.render('catways/index', { catways });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).send('Erreur serveur');
   }
 };
 
 /**
- * Récupère un catway par son numéro.
+ * Affiche le détail d'un catway.
  * @async
  * @function getCatway
  * @param {Object} req - Objet requête Express
@@ -34,12 +34,23 @@ const getCatway = async (req, res) => {
   try {
     const catway = await Catway.findOne({ catwayNumber: req.params.id });
     if (!catway) {
-      return res.status(404).json({ message: 'Catway non trouvé' });
+      return res.status(404).send('Catway non trouvé');
     }
-    res.status(200).json(catway);
+    res.render('catways/show', { catway });
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).send('Erreur serveur');
   }
+};
+
+/**
+ * Affiche le formulaire de création d'un catway.
+ * @function getCreateCatway
+ * @param {Object} req - Objet requête Express
+ * @param {Object} res - Objet réponse Express
+ * @returns {void}
+ */
+const getCreateCatway = (req, res) => {
+  res.render('catways/create');
 };
 
 /**
@@ -54,14 +65,34 @@ const createCatway = async (req, res) => {
   try {
     const catway = new Catway(req.body);
     await catway.save();
-    res.status(201).json(catway);
+    res.redirect('/catways');
   } catch (error) {
-    res.status(400).json({ message: 'Erreur de création', error: error.message });
+    res.render('catways/create', { error: error.message });
   }
 };
 
 /**
- * Met à jour l'état d'un catway (catwayState uniquement).
+ * Affiche le formulaire de modification d'un catway.
+ * @async
+ * @function getEditCatway
+ * @param {Object} req - Objet requête Express
+ * @param {Object} res - Objet réponse Express
+ * @returns {Promise<void>}
+ */
+const getEditCatway = async (req, res) => {
+  try {
+    const catway = await Catway.findOne({ catwayNumber: req.params.id });
+    if (!catway) {
+      return res.status(404).send('Catway non trouvé');
+    }
+    res.render('catways/edit', { catway });
+  } catch (error) {
+    res.status(500).send('Erreur serveur');
+  }
+};
+
+/**
+ * Met à jour l'état d'un catway.
  * @async
  * @function updateCatway
  * @param {Object} req - Objet requête Express
@@ -77,16 +108,16 @@ const updateCatway = async (req, res) => {
       { new: true, runValidators: true }
     );
     if (!catway) {
-      return res.status(404).json({ message: 'Catway non trouvé' });
+      return res.status(404).send('Catway non trouvé');
     }
-    res.status(200).json(catway);
+    res.redirect('/catways');
   } catch (error) {
-    res.status(400).json({ message: 'Erreur de mise à jour', error: error.message });
+    res.status(400).send('Erreur de mise à jour');
   }
 };
 
 /**
- * Supprime un catway par son numéro.
+ * Supprime un catway.
  * @async
  * @function deleteCatway
  * @param {Object} req - Objet requête Express
@@ -97,12 +128,12 @@ const deleteCatway = async (req, res) => {
   try {
     const catway = await Catway.findOneAndDelete({ catwayNumber: req.params.id });
     if (!catway) {
-      return res.status(404).json({ message: 'Catway non trouvé' });
+      return res.status(404).send('Catway non trouvé');
     }
-    res.status(200).json({ message: 'Catway supprimé avec succès' });
+    res.redirect('/catways');
   } catch (error) {
-    res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    res.status(500).send('Erreur serveur');
   }
 };
 
-module.exports = { getAllCatways, getCatway, createCatway, updateCatway, deleteCatway };
+module.exports = { getAllCatways, getCatway, getCreateCatway, createCatway, getEditCatway, updateCatway, deleteCatway };
