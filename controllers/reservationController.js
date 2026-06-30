@@ -119,17 +119,21 @@ const getEditReservation = async (req, res) => {
  */
 const updateReservation = async (req, res) => {
   try {
-    const reservation = await Reservation.findByIdAndUpdate(
-      req.params.idReservation,
-      req.body,
-      { new: true, runValidators: true }
-    );
+    const reservation = await Reservation.findById(req.params.idReservation);
     if (!reservation) {
       return res.status(404).send('Réservation non trouvée');
     }
+
+    reservation.clientName = req.body.clientName;
+    reservation.boatName = req.body.boatName;
+    reservation.startDate = req.body.startDate;
+    reservation.endDate = req.body.endDate;
+
+    await reservation.save();
+
     res.redirect(`/catways/${req.params.id}/reservations`);
   } catch (error) {
-    res.status(400).send('Erreur de mise à jour');
+    res.status(400).send('Erreur de mise à jour : ' + error.message);
   }
 };
 
