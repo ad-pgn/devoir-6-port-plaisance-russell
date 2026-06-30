@@ -61,3 +61,6 @@ L'application est accessible sur `http://localhost:3000`.
 - Gestion CRUD des utilisateurs
 - Tableau de bord avec réservations en cours
 - Documentation API interactive (Swagger)
+
+---
+*Dernière mise à jour : 30 juin 2026*
